@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"io"
 	"log"
+	"time"
 )
 
 func main() {
@@ -18,8 +19,9 @@ func main() {
 	defer cc.Close()
 
 	c := greetpb.NewGreetServiceClient(cc)
-	doUnary(c)
-	doStreaming(c)
+	//doUnary(c)
+	//doStreaming(c)
+	doClientStreaming(c)
 }
 
 func doUnary(c greetpb.GreetServiceClient){
@@ -58,4 +60,25 @@ func doStreaming(c greetpb.GreetServiceClient){
 		log.Printf("[Response from GreetManyTimes: %v....]",msg.GetResult())
 	}
 
+}
+
+func doClientStreaming(c greetpb.GreetServiceClient){
+	stream,err:=c.LongGreet(context.Background())
+	if err!=nil{
+		log.Fatalf("[error while calling LongGreet:%v]",err)
+	}
+	for i:=0;i<5;i++{
+		req:=&greetpb.LongGreetRequest{Greeting:&greetpb.Greeting{FirstName:"karthik"}}
+		err=stream.Send(req)
+		if err!=nil{
+			log.Fatalf("[failed to send request due to error:%v]",err)
+		}
+		log.Printf("[sent request:%v]",req)
+		time.Sleep(1000*time.Millisecond)
+	}
+	res,err:=stream.CloseAndRecv()
+	if err!=nil{
+		log.Fatalf("[error while recieveing message from LongGreet:%v]",err)
+	}
+	log.Printf("Response fromLong Greet:%v",res)
 }

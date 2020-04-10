@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/k2rth1k/grpc_learning/greet/greetpb"
 	"google.golang.org/grpc"
+	"io"
 	"log"
 	"net"
 	"strconv"
@@ -33,6 +34,22 @@ func(*server) GreetManyTimes(req *greetpb.GreetManyTimesRequest,stream greetpb.G
 		}
 		_=stream.Send(res)
 		time.Sleep(1000*time.Millisecond)
+	}
+	return nil
+}
+
+func(*server) LongGreet(stream greetpb.GreetService_LongGreetServer) error{
+	log.Println("[called LongGreet rpc]")
+	result:=""
+	for {
+		req,err:=stream.Recv()
+		if err==io.EOF{
+			return stream.SendAndClose(&greetpb.LongGreetResponse{Result:result})
+		}
+		if err!=nil{
+			log.Fatalf("[failed to recieve req:%v...]",err)
+		}
+		result=result+req.Greeting.FirstName+"!\n"
 	}
 	return nil
 }
