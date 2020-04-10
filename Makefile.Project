@@ -1,0 +1,9 @@
+.PHONY: proto
+proto:
+		@echo "generating proto files....."
+		@protoc greet/greetpb/*.proto --go_out=plugins=grpc:.
+
+.PHONY: run_server
+run_server:
+			@echo "launching server....."
+			@go run greet/greet_server/server.go
