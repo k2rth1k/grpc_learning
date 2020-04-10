@@ -13,7 +13,7 @@ type server struct {
 }
 
 func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.GreetResponse, error) {
-	fmt.Printf("Greet function is called with request %v",req)
+	fmt.Printf("[Greet function is called with request %v]\n",req)
 	firstName := req.Greeting.FirstName
 	result := "Hello " + firstName
 	res := greetpb.GreetResponse{
