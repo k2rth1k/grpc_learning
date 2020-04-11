@@ -4,8 +4,11 @@ import (
 	"context"
 	"github.com/k2rth1k/grpc_learning/calculator/calculatorpb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 	"log"
+	"math"
 	"net"
 )
 func(s *server) Sum(ctx context.Context,req *calculatorpb.SumRequest) (*calculatorpb.SumResponse,error){
@@ -33,6 +36,18 @@ func(s *server) ComputeAverage(stream calculatorpb.CalculatorService_ComputeAver
 		average+=float64(req.Number)
 	}
 	return nil
+}
+
+func(*server) SquareRoot(ctx context.Context,req *calculatorpb.SquareRootRequest) (*calculatorpb.SquareRootResponse,error){
+	log.Println("[SquareRoot RPC is called.....]")
+	number:=req.Number
+	if number<0{
+		err:=status.Error(codes.InvalidArgument,"cannot find root of a negative number")
+		log.Printf("[failed to compute square root of number:%v due to error:%v]\n",number,err)
+		return nil,err
+	}
+	log.Printf("[Successfully computed root of number:%v]\n",req.Number)
+	return &calculatorpb.SquareRootResponse{NumberRoot:math.Sqrt(number)},nil
 }
 
 type server struct{}

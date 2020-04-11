@@ -24,10 +24,11 @@ func main(){
 	}
 	log.Printf("[response from Sum:%v...\n]",response)
 
-	doClientSideStreaming(c)
+	//doClientSideStreaming(c)
+	squareRoot(c)
 }
 
-func doClientSideStreaming(c calculatorpb.CalculatorServiceClient){
+func doClientSideStreaming(c calculatorpb.CalculatorServiceClient) {
 	log.Println("streaming numbers for  average")
 	res,err:=c.ComputeAverage(context.Background())
 	if err!=nil{
@@ -46,4 +47,18 @@ func doClientSideStreaming(c calculatorpb.CalculatorServiceClient){
 		log.Fatalf("[failed to recieve response from ComputeAverage]")
 	}
 	log.Printf("[Computeed Average of all numbers is:%v]",response.Average)
+}
+
+func squareRoot(c calculatorpb.CalculatorServiceClient){
+	log.Println("[square_Root client started running]")
+
+	for i:=5;i>-2;i--{
+		req:=&calculatorpb.SquareRootRequest{Number:float64(i)}
+		res,err:=c.SquareRoot(context.Background(),req)
+		if err!=nil{
+			log.Printf("[SquareRoot has failed for request:%v due to error:%v]\n",req,err)
+			continue
+		}
+		log.Printf("[sqaureRoot of number %v is %v]\n",i,res.NumberRoot)
+	}
 }

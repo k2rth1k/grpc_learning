@@ -8,3 +8,6 @@ proto:
 run_server:
 			@echo "launching server....."
 			@go run greet/greet_server/server.go
+
+openssl:
+		@cd ssl && ./instructions.sh; cd ..
