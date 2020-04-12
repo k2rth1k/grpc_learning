@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  grpc_learning:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./Dockerfile
